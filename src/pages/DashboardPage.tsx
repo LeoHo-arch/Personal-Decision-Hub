@@ -1,4 +1,6 @@
 import { Widget } from "@/components/shared/Widget";
+import { PageHeader } from "@/components/wireframe";
+import { RefreshCw } from "lucide-react";
 
 const widgets: { title: string; description: string }[] = [
   { title: "中国宏观经济概览", description: "GDP、CPI、PPI 等核心指标占位" },
@@ -14,12 +16,19 @@ const widgets: { title: string; description: string }[] = [
 export function DashboardPage() {
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-slate-800">个人决策中心</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          宏观经济、消费品价格与个人决策管理。
-        </p>
-      </div>
+      <PageHeader
+        title="个人决策中心"
+        description="宏观经济、消费品价格与个人决策管理。"
+        actions={
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50"
+          >
+            <RefreshCw size={14} />
+            刷新
+          </button>
+        }
+      />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {widgets.map((w) => (
           <Widget key={w.title} title={w.title} description={w.description} />
