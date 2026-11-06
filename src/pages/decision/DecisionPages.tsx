@@ -4,9 +4,7 @@ import {
   ChartPlaceholder,
   TablePlaceholder,
   StatCard,
-  FilterBar,
   FilterSelect,
-  FilterSearch,
   FilterButton,
   EmptyState,
 } from "@/components/wireframe";
@@ -34,7 +32,7 @@ export function DecisionStocksPage() {
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <SectionCard title="自选股票列表" description="已添加的自选股">
             <TablePlaceholder
               columns={["代码", "名称", "现价", "涨跌", "涨跌幅", "市值", "备注"]}
@@ -76,7 +74,7 @@ export function DecisionPurchasePage() {
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <SectionCard title="计划商品列表" description="待购与追踪商品">
             <TablePlaceholder
               columns={["商品", "分类", "当前价", "目标价", "预算", "优先级", "状态"]}
@@ -124,7 +122,7 @@ export function DecisionLogPage() {
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="min-w-0 lg:col-span-2">
           <SectionCard title="决策记录列表" description="全部决策日志">
             <TablePlaceholder
               columns={["标题", "分类", "时间", "状态", "备注"]}

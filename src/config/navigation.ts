@@ -1,7 +1,6 @@
 import {
   LayoutDashboard,
   Globe2,
-  TrendingUp,
   CircleDollarSign,
   Smartphone,
   ShoppingBasket,

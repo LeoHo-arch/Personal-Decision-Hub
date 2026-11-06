@@ -19,7 +19,7 @@ export function SectionCard({
 }: SectionCardProps) {
   return (
     <section
-      className={`rounded-lg border border-gray-200 bg-white shadow-sm ${className}`}
+      className={`min-w-0 rounded-lg border border-gray-200 bg-white shadow-sm ${className}`}
     >
       {(title || actions) && (
         <header className="flex items-center justify-between border-b border-gray-100 px-4 py-3">

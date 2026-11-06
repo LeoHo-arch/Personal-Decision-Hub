@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   navGroups,
   type NavGroup,
@@ -32,8 +33,8 @@ export function Sidebar({
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-gray-200 bg-white transition-all duration-200 lg:static lg:z-auto ${
-          collapsed ? "w-16" : "w-60"
+        className={`fixed inset-y-0 left-0 z-40 flex w-60 flex-col border-r border-gray-200 bg-white transition-all duration-200 lg:static lg:z-auto ${
+          collapsed ? "lg:w-16" : ""
         } ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       >
         <div className="flex h-16 shrink-0 items-center justify-end border-b border-gray-200 px-3">
@@ -93,12 +94,11 @@ function NavGroupView({
   if (group.items.length === 1) {
     const item = group.items[0];
     const Icon = item.icon;
-    const isActive = item.id === activeId;
     return (
       <div className="mb-1">
         <SidebarButton
           collapsed={collapsed}
-          active={isActive}
+          active={item.id === activeId}
           icon={<Icon size={18} />}
           label={item.label}
           onClick={() => onSelect(item.id)}
@@ -113,40 +113,45 @@ function NavGroupView({
     <div className="mb-3">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
-        className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium uppercase tracking-wide ${
-          collapsed ? "justify-center" : "justify-between"
-        } ${groupActive ? "text-slate-800" : "text-gray-400"} hover:text-slate-700`}
+        onClick={collapsed ? undefined : () => setOpen((v) => !v)}
+        aria-label={collapsed ? group.label : undefined}
+        className={`flex w-full items-center justify-between gap-2 rounded-md px-2 py-1.5 text-xs font-medium uppercase tracking-wide ${
+          collapsed ? "lg:justify-center" : ""
+        } ${groupActive ? "text-slate-800" : "text-gray-400"} ${
+          collapsed ? "" : "hover:text-slate-700"
+        }`}
       >
-        {!collapsed && <span>{group.label}</span>}
-        {collapsed ? (
-          <span className="h-px w-6 bg-gray-200" />
-        ) : (
-          <ChevronDown
-            size={14}
-            className={`transition-transform ${open ? "" : "-rotate-90"}`}
-          />
-        )}
+        <span className={`truncate ${collapsed ? "lg:hidden" : ""}`}>
+          {group.label}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`shrink-0 transition-transform ${open ? "" : "-rotate-90"} ${
+            collapsed ? "lg:hidden" : ""
+          }`}
+        />
+        {collapsed && <span className="hidden h-px w-6 bg-gray-200 lg:block" />}
       </button>
-      {!collapsed && open && (
-        <div className="mt-1 space-y-0.5">
-          {group.items.map((item) => {
-            const Icon = item.icon;
-            const isActive = item.id === activeId;
-            return (
-              <SidebarButton
-                key={item.id}
-                collapsed={false}
-                active={isActive}
-                icon={<Icon size={16} />}
-                label={item.label}
-                indent
-                onClick={() => onSelect(item.id)}
-              />
-            );
-          })}
-        </div>
-      )}
+      <div
+        className={`mt-1 space-y-0.5 ${open ? "" : "hidden"} ${
+          collapsed ? "lg:block" : ""
+        }`}
+      >
+        {group.items.map((item) => {
+          const Icon = item.icon;
+          return (
+            <SidebarButton
+              key={item.id}
+              collapsed={collapsed}
+              active={item.id === activeId}
+              icon={<Icon size={16} />}
+              label={item.label}
+              indent
+              onClick={() => onSelect(item.id)}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -166,21 +171,52 @@ function SidebarButton({
   indent?: boolean;
   onClick: () => void;
 }) {
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
+
+  const showTooltip = () => {
+    if (!collapsed || !buttonRef.current) return;
+    if (!window.matchMedia("(min-width: 1024px)").matches) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    setTooltipPos({ top: rect.top + rect.height / 2, left: rect.right + 8 });
+  };
+
+  const hideTooltip = () => setTooltipPos(null);
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={collapsed ? label : undefined}
-      className={`flex w-full items-center gap-2.5 rounded-md text-sm transition-colors ${
-        collapsed ? "justify-center px-2 py-2" : `px-2.5 py-2 ${indent ? "ml-2" : ""}`
-      } ${
-        active
-          ? "bg-slate-800 text-white"
-          : "text-gray-600 hover:bg-gray-100 hover:text-slate-800"
-      }`}
-    >
-      <span className="shrink-0">{icon}</span>
-      {!collapsed && <span className="truncate">{label}</span>}
-    </button>
+    <>
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={onClick}
+        onMouseEnter={showTooltip}
+        onMouseLeave={hideTooltip}
+        onFocus={showTooltip}
+        onBlur={hideTooltip}
+        aria-label={collapsed ? label : undefined}
+        aria-current={active ? "page" : undefined}
+        className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm transition-colors ${
+          collapsed ? "lg:justify-center lg:px-2" : ""
+        } ${indent ? "ml-2" : ""} ${
+          active
+            ? "bg-slate-800 text-white"
+            : "text-gray-600 hover:bg-gray-100 hover:text-slate-800"
+        }`}
+      >
+        <span className="shrink-0">{icon}</span>
+        <span className={`truncate ${collapsed ? "lg:hidden" : ""}`}>{label}</span>
+      </button>
+      {collapsed && tooltipPos &&
+        createPortal(
+          <div
+            role="tooltip"
+            style={{ top: tooltipPos.top, left: tooltipPos.left }}
+            className="pointer-events-none fixed z-50 -translate-y-1/2 whitespace-nowrap rounded-md bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-white shadow-md"
+          >
+            {label}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }

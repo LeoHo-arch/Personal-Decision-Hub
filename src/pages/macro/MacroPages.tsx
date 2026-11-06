@@ -4,11 +4,9 @@ import {
   ChartPlaceholder,
   TablePlaceholder,
   StatCard,
-  FilterBar,
   FilterSelect,
   FilterButton,
 } from "@/components/wireframe";
-import { RefreshCw } from "lucide-react";
 
 export function MacroOverviewPage() {
   return (
