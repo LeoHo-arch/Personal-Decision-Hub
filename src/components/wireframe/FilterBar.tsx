@@ -15,14 +15,38 @@ export function FilterBar({ children, className = "" }: FilterBarProps) {
   );
 }
 
-export function FilterSelect({ label, options }: { label: string; options: string[] }) {
+interface FilterSelectOption {
+  value: string;
+  label: string;
+}
+
+export function FilterSelect({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: (string | FilterSelectOption)[];
+  value?: string;
+  onChange?: (value: string) => void;
+}) {
   return (
     <label className="flex items-center gap-2 text-xs text-gray-500">
       {label}
-      <select className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-sm text-gray-600 focus:outline-none">
-        {options.map((o) => (
-          <option key={o}>{o}</option>
-        ))}
+      <select
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+        className="rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-sm text-gray-600 focus:outline-none"
+      >
+        {options.map((o) => {
+          const option = typeof o === "string" ? { value: o, label: o } : o;
+          return (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          );
+        })}
       </select>
     </label>
   );

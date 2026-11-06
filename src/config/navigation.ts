@@ -11,6 +11,9 @@ import {
   Eye,
   ShoppingCart,
   NotebookPen,
+  Newspaper,
+  Archive,
+  FileText,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -21,6 +24,9 @@ export type NavItemId =
   | "macro-china"
   | "macro-us"
   | "macro-global"
+  | "news-briefing"
+  | "news-archive"
+  | "news-detail"
   | "price-overview"
   | "price-digital"
   | "price-food"
@@ -58,6 +64,15 @@ export const navGroups: NavGroup[] = [
       { id: "macro-china", label: "中国经济", icon: Flag },
       { id: "macro-us", label: "美国经济", icon: Landmark },
       { id: "macro-global", label: "全球市场", icon: Earth },
+    ],
+  },
+  {
+    id: "news",
+    label: "NEWS",
+    items: [
+      { id: "news-briefing", label: "Daily Briefing", icon: Newspaper },
+      { id: "news-archive", label: "News Archive", icon: Archive },
+      { id: "news-detail", label: "News Detail", icon: FileText },
     ],
   },
   {
