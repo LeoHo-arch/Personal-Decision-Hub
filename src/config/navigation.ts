@@ -13,7 +13,6 @@ import {
   NotebookPen,
   Newspaper,
   Archive,
-  FileText,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -57,13 +56,13 @@ export const navGroups: NavGroup[] = [
     ],
   },
   {
-    id: "macro",
-    label: "Macro Intelligence",
+    id: "price",
+    label: "Price Intelligence",
     items: [
-      { id: "macro-overview", label: "宏观经济总览", icon: Globe2 },
-      { id: "macro-china", label: "中国经济", icon: Flag },
-      { id: "macro-us", label: "美国经济", icon: Landmark },
-      { id: "macro-global", label: "全球市场", icon: Earth },
+      { id: "price-overview", label: "价格总览", icon: CircleDollarSign },
+      { id: "price-digital", label: "数码产品", icon: Smartphone },
+      { id: "price-food", label: "食品与日用品", icon: ShoppingBasket },
+      { id: "price-energy", label: "能源与大宗商品", icon: Fuel },
     ],
   },
   {
@@ -72,17 +71,16 @@ export const navGroups: NavGroup[] = [
     items: [
       { id: "news-briefing", label: "Daily Briefing", icon: Newspaper },
       { id: "news-archive", label: "News Archive", icon: Archive },
-      { id: "news-detail", label: "News Detail", icon: FileText },
     ],
   },
   {
-    id: "price",
-    label: "Price Intelligence",
+    id: "macro",
+    label: "Macro Intelligence",
     items: [
-      { id: "price-overview", label: "价格总览", icon: CircleDollarSign },
-      { id: "price-digital", label: "数码产品", icon: Smartphone },
-      { id: "price-food", label: "食品与日用品", icon: ShoppingBasket },
-      { id: "price-energy", label: "能源与大宗商品", icon: Fuel },
+      { id: "macro-overview", label: "宏观经济总览", icon: Globe2 },
+      { id: "macro-china", label: "中国经济", icon: Flag },
+      { id: "macro-us", label: "美国经济", icon: Landmark },
+      { id: "macro-global", label: "全球市场", icon: Earth },
     ],
   },
   {
