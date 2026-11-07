@@ -47,13 +47,13 @@ export function PriceDetailContent({ item }: { item: PriceProduct }) {
           <div className="rounded-md bg-gray-50 p-3">
             <dt className="text-xs text-gray-500">上期价格</dt>
             <dd className="mt-1 font-medium text-slate-700">
-              {change.previous ? formatValue(change.previous.value, item.unit) : "—"}
+              {change.previous ? formatValue(change.previous.value, item.unit) : "暂无数据"}
             </dd>
           </div>
           <div className="rounded-md bg-gray-50 p-3">
             <dt className="text-xs text-gray-500">价格变化</dt>
             <dd className={`mt-1 font-medium ${changeToneClass(change.delta)}`}>
-              {change.delta !== null ? formatDelta(change.delta, item.unit) : "—"}
+              {change.delta !== null ? formatDelta(change.delta, item.unit) : "暂无数据"}
               {change.deltaPct !== null && (
                 <span className="ml-1 text-xs font-normal">({formatDeltaPct(change.deltaPct)})</span>
               )}
@@ -83,6 +83,10 @@ export function PriceDetailContent({ item }: { item: PriceProduct }) {
           <div className="flex justify-between gap-3">
             <dt className="text-gray-500">数据来源</dt>
             <dd className="text-right text-slate-700">{item.source}</dd>
+          </div>
+          <div className="flex justify-between gap-3">
+            <dt className="text-gray-500">更新时间</dt>
+            <dd className="text-right text-slate-700">{change.latest.period}</dd>
           </div>
         </dl>
       </SectionCard>
