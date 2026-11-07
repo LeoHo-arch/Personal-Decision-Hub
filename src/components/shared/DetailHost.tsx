@@ -1,8 +1,8 @@
 import { DetailDrawer } from "@/components/shared/DetailDrawer";
 import { NewsDetailContent, NewsDetailHeader } from "@/components/news/NewsDetailContent";
-import type { NewsItem } from "@/types/news";
-
-export type DetailTarget = { kind: "news"; item: NewsItem };
+import { MacroDetailContent, MacroDetailHeader } from "@/components/macro/MacroDetailContent";
+import { PriceDetailContent, PriceDetailHeader } from "@/components/price/PriceDetailContent";
+import type { DetailTarget } from "@/types/detail";
 
 interface DetailHostProps {
   open: boolean;
@@ -23,6 +23,28 @@ export function DetailHost({ open, target, onClose }: DetailHostProps) {
           header={<NewsDetailHeader item={target.item} />}
         >
           <NewsDetailContent item={target.item} />
+        </DetailDrawer>
+      );
+    case "macro":
+      return (
+        <DetailDrawer
+          open={open}
+          onClose={onClose}
+          label="宏观指标详情"
+          header={<MacroDetailHeader item={target.item} />}
+        >
+          <MacroDetailContent item={target.item} />
+        </DetailDrawer>
+      );
+    case "price":
+      return (
+        <DetailDrawer
+          open={open}
+          onClose={onClose}
+          label="价格详情"
+          header={<PriceDetailHeader item={target.item} />}
+        >
+          <PriceDetailContent item={target.item} />
         </DetailDrawer>
       );
   }

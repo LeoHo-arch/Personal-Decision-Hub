@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
-import { DetailHost, type DetailTarget } from "@/components/shared/DetailHost";
+import { DetailHost } from "@/components/shared/DetailHost";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { defaultPage, type NavItemId } from "@/config/navigation";
 import { useDetailDrawer } from "@/hooks/useDetailDrawer";
+import { resolveDetailTarget } from "@/lib/detailTargets";
+import type { DetailRef, DetailTarget } from "@/types/detail";
 import { MOCK_NEWS } from "@/data/mockNews";
 import { getFeaturedNews, getLatestBriefingDate } from "@/lib/news";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -34,6 +36,7 @@ interface PageProps {
   selectedNewsId: string | null;
   onOpenNews: (id: string) => void;
   onOpenNewsPage: (id: string) => void;
+  onOpenDetail: (ref: DetailRef) => void;
   onBackToBriefing: () => void;
 }
 
@@ -75,10 +78,12 @@ function App() {
 
   const ActivePage = pageRegistry[activeId];
 
-  const openNewsDrawer = (id: string) => {
-    const item = MOCK_NEWS.find((n) => n.id === id);
-    if (item) detail.openWith({ kind: "news", item });
+  const openDetail = (ref: DetailRef) => {
+    const target = resolveDetailTarget(ref);
+    if (target) detail.openWith(target);
   };
+
+  const openNewsDrawer = (id: string) => openDetail({ kind: "news", id });
 
   const openNewsPage = (id: string) => {
     setSelectedNewsId(id);
@@ -103,6 +108,7 @@ function App() {
             selectedNewsId={selectedNewsId}
             onOpenNews={openNewsDrawer}
             onOpenNewsPage={openNewsPage}
+            onOpenDetail={openDetail}
             onBackToBriefing={() => setActiveId("news-briefing")}
           />
         </main>

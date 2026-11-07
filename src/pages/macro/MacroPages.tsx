@@ -7,8 +7,46 @@ import {
   FilterSelect,
   FilterButton,
 } from "@/components/wireframe";
+import { DetailTrigger } from "@/components/shared/DetailTrigger";
+import { TrendChart } from "@/components/shared/TrendChart";
+import { MacroIndicatorTable } from "@/components/macro/MacroIndicatorTable";
+import { CN_CPI, CN_GDP, CN_PMI, CN_PPI, US_CPI, US_FED_RATE, US_GDP, US_UNEMPLOYMENT } from "@/data/mockMacro";
+import { latestStat } from "@/lib/trends";
+import type { DetailRef } from "@/types/detail";
+import type { MacroIndicator } from "@/types/macro";
 
-export function MacroOverviewPage() {
+interface MacroPageProps {
+  onOpenDetail: (ref: DetailRef) => void;
+}
+
+function openMacro(onOpenDetail: MacroPageProps["onOpenDetail"], item: MacroIndicator) {
+  return () => onOpenDetail({ kind: "macro", id: item.id });
+}
+
+function MacroTrendCard({
+  title,
+  description,
+  item,
+  onOpenDetail,
+}: MacroPageProps & { title: string; description: string; item: MacroIndicator }) {
+  return (
+    <SectionCard title={title} description={description}>
+      <DetailTrigger onOpen={openMacro(onOpenDetail, item)} className="p-1">
+        <TrendChart series={item.series} label={`${item.name}趋势图`} />
+        <p className="mt-3 text-center text-xs text-gray-400">
+          展示：{item.name}，点击查看指标详情
+        </p>
+      </DetailTrigger>
+    </SectionCard>
+  );
+}
+
+export function MacroOverviewPage({ onOpenDetail }: MacroPageProps) {
+  const gdp = latestStat(CN_GDP.series, CN_GDP.unit);
+  const cpi = latestStat(CN_CPI.series, CN_CPI.unit);
+  const ppi = latestStat(CN_PPI.series, CN_PPI.unit);
+  const pmi = latestStat(CN_PMI.series, CN_PMI.unit);
+
   return (
     <div>
       <PageHeader
@@ -23,10 +61,18 @@ export function MacroOverviewPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="GDP 增速" />
-        <StatCard label="CPI 同比" />
-        <StatCard label="PPI 同比" />
-        <StatCard label="PMI" />
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_GDP)}>
+          <StatCard label="GDP 增速" value={gdp.value} change={gdp.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_CPI)}>
+          <StatCard label="CPI 同比" value={cpi.value} change={cpi.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_PPI)}>
+          <StatCard label="PPI 同比" value={ppi.value} change={ppi.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_PMI)}>
+          <StatCard label="PMI" value={pmi.value} change={pmi.change} />
+        </DetailTrigger>
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -48,9 +94,12 @@ export function MacroOverviewPage() {
       </div>
 
       <div className="mb-4">
-        <SectionCard title="主要宏观经济趋势" description="关键宏观指标走势">
-          <ChartPlaceholder label="宏观经济趋势图占位" />
-        </SectionCard>
+        <MacroTrendCard
+          title="主要宏观经济趋势"
+          description="关键宏观指标走势"
+          item={CN_CPI}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
       <SectionCard title="最新经济数据发布" description="近期发布的重要经济数据">
@@ -64,7 +113,12 @@ export function MacroOverviewPage() {
   );
 }
 
-export function MacroChinaPage() {
+export function MacroChinaPage({ onOpenDetail }: MacroPageProps) {
+  const gdp = latestStat(CN_GDP.series, CN_GDP.unit);
+  const cpi = latestStat(CN_CPI.series, CN_CPI.unit);
+  const ppi = latestStat(CN_PPI.series, CN_PPI.unit);
+  const pmi = latestStat(CN_PMI.series, CN_PMI.unit);
+
   return (
     <div>
       <PageHeader
@@ -80,22 +134,34 @@ export function MacroChinaPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="GDP 同比" />
-        <StatCard label="CPI 同比" />
-        <StatCard label="PPI 同比" />
-        <StatCard label="PMI" />
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_GDP)}>
+          <StatCard label="GDP 同比" value={gdp.value} change={gdp.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_CPI)}>
+          <StatCard label="CPI 同比" value={cpi.value} change={cpi.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_PPI)}>
+          <StatCard label="PPI 同比" value={ppi.value} change={ppi.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, CN_PMI)}>
+          <StatCard label="PMI" value={pmi.value} change={pmi.change} />
+        </DetailTrigger>
       </div>
 
       <div className="mb-4">
-        <SectionCard title="经济指标历史趋势" description="各指标历史走势对比">
-          <ChartPlaceholder label="中国经济指标历史趋势图占位" />
-        </SectionCard>
+        <MacroTrendCard
+          title="经济指标历史趋势"
+          description="各指标历史走势对比"
+          item={CN_GDP}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionCard title="指标明细" description="按指标分类查看">
-          <TablePlaceholder
-            columns={["指标", "最新值", "同比", "环比", "发布日期"]}
+          <MacroIndicatorTable
+            indicators={[CN_GDP, CN_CPI, CN_PPI, CN_PMI]}
+            onOpen={(id) => onOpenDetail({ kind: "macro", id })}
           />
         </SectionCard>
         <SectionCard title="最新数据及发布时间" description="近期数据发布计划">
@@ -108,7 +174,12 @@ export function MacroChinaPage() {
   );
 }
 
-export function MacroUsPage() {
+export function MacroUsPage({ onOpenDetail }: MacroPageProps) {
+  const gdp = latestStat(US_GDP.series, US_GDP.unit);
+  const cpi = latestStat(US_CPI.series, US_CPI.unit);
+  const unemployment = latestStat(US_UNEMPLOYMENT.series, US_UNEMPLOYMENT.unit);
+  const fedRate = latestStat(US_FED_RATE.series, US_FED_RATE.unit);
+
   return (
     <div>
       <PageHeader
@@ -124,22 +195,34 @@ export function MacroUsPage() {
       />
 
       <div className="mb-4 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <StatCard label="GDP 同比" />
-        <StatCard label="CPI 同比" />
-        <StatCard label="失业率" />
-        <StatCard label="联邦基金利率" />
+        <DetailTrigger onOpen={openMacro(onOpenDetail, US_GDP)}>
+          <StatCard label="GDP 环比折年率" value={gdp.value} change={gdp.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, US_CPI)}>
+          <StatCard label="CPI 同比" value={cpi.value} change={cpi.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, US_UNEMPLOYMENT)}>
+          <StatCard label="失业率" value={unemployment.value} change={unemployment.change} />
+        </DetailTrigger>
+        <DetailTrigger onOpen={openMacro(onOpenDetail, US_FED_RATE)}>
+          <StatCard label="联邦基金利率" value={fedRate.value} change={fedRate.change} />
+        </DetailTrigger>
       </div>
 
       <div className="mb-4">
-        <SectionCard title="经济指标趋势" description="主要指标历史走势">
-          <ChartPlaceholder label="美国经济指标趋势图占位" />
-        </SectionCard>
+        <MacroTrendCard
+          title="经济指标趋势"
+          description="主要指标历史走势"
+          item={US_CPI}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SectionCard title="指标明细" description="按指标分类查看">
-          <TablePlaceholder
-            columns={["指标", "最新值", "同比", "环比", "发布日期"]}
+          <MacroIndicatorTable
+            indicators={[US_GDP, US_CPI, US_UNEMPLOYMENT, US_FED_RATE]}
+            onOpen={(id) => onOpenDetail({ kind: "macro", id })}
           />
         </SectionCard>
         <SectionCard title="最新数据发布" description="近期数据发布时间表">

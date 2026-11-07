@@ -1,7 +1,6 @@
 import {
   PageHeader,
   SectionCard,
-  ChartPlaceholder,
   TablePlaceholder,
   StatCard,
   FilterBar,
@@ -9,9 +8,54 @@ import {
   FilterSearch,
   FilterButton,
 } from "@/components/wireframe";
+import { DetailTrigger } from "@/components/shared/DetailTrigger";
+import { TrendChart } from "@/components/shared/TrendChart";
+import { PriceProductTable } from "@/components/price/PriceProductTable";
+import {
+  DIGITAL_HEADPHONE,
+  DIGITAL_LAPTOP,
+  DIGITAL_PHONE,
+  ENERGY_COPPER,
+  ENERGY_GAS,
+  ENERGY_GOLD,
+  ENERGY_OIL,
+  FOOD_DETERGENT,
+  FOOD_EGG,
+  FOOD_OIL,
+  FOOD_RICE,
+} from "@/data/mockPrice";
+import { latestStat } from "@/lib/trends";
+import type { DetailRef } from "@/types/detail";
+import type { PriceProduct } from "@/types/price";
 import { Smartphone, ShoppingBasket, Fuel } from "lucide-react";
 
-export function PriceOverviewPage() {
+interface PricePageProps {
+  onOpenDetail: (ref: DetailRef) => void;
+}
+
+function openPrice(onOpenDetail: PricePageProps["onOpenDetail"], item: PriceProduct) {
+  return () => onOpenDetail({ kind: "price", id: item.id });
+}
+
+function PriceTrendCard({
+  title,
+  description,
+  item,
+  onOpenDetail,
+}: PricePageProps & { title: string; description: string; item: PriceProduct }) {
+  return (
+    <SectionCard title={title} description={description}>
+      <DetailTrigger onOpen={openPrice(onOpenDetail, item)} className="p-1">
+        <TrendChart series={item.series} label={`${item.name}价格趋势图`} />
+        <p className="mt-3 text-center text-xs text-gray-400">
+          展示：{item.name}，点击查看商品详情
+        </p>
+      </DetailTrigger>
+    </SectionCard>
+  );
+}
+
+export function PriceOverviewPage({ onOpenDetail }: PricePageProps) {
   return (
     <div>
       <PageHeader
@@ -41,16 +85,25 @@ export function PriceOverviewPage() {
       </div>
 
       <div className="mb-4">
-        <SectionCard title="商品价格趋势" description="重点商品价格走势">
-          <ChartPlaceholder label="商品价格趋势图占位" />
-        </SectionCard>
+        <PriceTrendCard
+          title="商品价格趋势"
+          description="重点商品价格走势"
+          item={ENERGY_OIL}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
-      <SectionCard title="商品分类入口" description="进入各分类价格追踪">
+      <SectionCard title="商品分类入口" description="点击卡片查看各分类的代表商品">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <CategoryEntry icon={<Smartphone size={20} />} label="数码产品" desc="手机、电脑、相机等" />
-          <CategoryEntry icon={<ShoppingBasket size={20} />} label="食品与日用品" desc="食品饮料、日用品" />
-          <CategoryEntry icon={<Fuel size={20} />} label="能源与大宗商品" desc="原油、金属等" />
+          <DetailTrigger onOpen={openPrice(onOpenDetail, DIGITAL_PHONE)}>
+            <CategoryEntry icon={<Smartphone size={20} />} label="数码产品" desc="手机、电脑、相机等" />
+          </DetailTrigger>
+          <DetailTrigger onOpen={openPrice(onOpenDetail, FOOD_OIL)}>
+            <CategoryEntry icon={<ShoppingBasket size={20} />} label="食品与日用品" desc="食品饮料、日用品" />
+          </DetailTrigger>
+          <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_OIL)}>
+            <CategoryEntry icon={<Fuel size={20} />} label="能源与大宗商品" desc="原油、金属等" />
+          </DetailTrigger>
         </div>
       </SectionCard>
     </div>
@@ -71,7 +124,9 @@ function CategoryEntry({ icon, label, desc }: { icon: React.ReactNode; label: st
   );
 }
 
-export function PriceDigitalPage() {
+export function PriceDigitalPage({ onOpenDetail }: PricePageProps) {
+  const digitalProducts = [DIGITAL_PHONE, DIGITAL_LAPTOP, DIGITAL_HEADPHONE];
+
   return (
     <div>
       <PageHeader
@@ -98,21 +153,27 @@ export function PriceDigitalPage() {
         <SectionCard title="商品价格变化概览" description="近期价格变动排行">
           <TablePlaceholder columns={["商品", "当前价", "涨跌", "涨跌幅"]} />
         </SectionCard>
-        <SectionCard title="商品价格历史趋势" description="选中商品价格走势">
-          <ChartPlaceholder label="数码产品价格历史趋势图占位" />
-        </SectionCard>
+        <PriceTrendCard
+          title="商品价格历史趋势"
+          description="选中商品价格走势"
+          item={DIGITAL_PHONE}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
-      <SectionCard title="商品追踪列表" description="全部追踪商品">
-        <TablePlaceholder
-          columns={["商品名称", "分类", "品牌", "当前价", "历史最低", "更新时间", "状态"]}
+      <SectionCard title="商品追踪列表" description="点击商品名称查看详情">
+        <PriceProductTable
+          products={digitalProducts}
+          onOpen={(id) => onOpenDetail({ kind: "price", id })}
         />
       </SectionCard>
     </div>
   );
 }
 
-export function PriceFoodPage() {
+export function PriceFoodPage({ onOpenDetail }: PricePageProps) {
+  const foodProducts = [FOOD_OIL, FOOD_RICE, FOOD_EGG, FOOD_DETERGENT];
+
   return (
     <div>
       <PageHeader
@@ -143,21 +204,30 @@ export function PriceFoodPage() {
         <SectionCard title="品牌及规格比较" description="同类商品不同品牌/规格对比">
           <TablePlaceholder columns={["品牌", "规格", "价格", "单位价", "差异"]} />
         </SectionCard>
-        <SectionCard title="商品历史价格趋势" description="价格走势">
-          <ChartPlaceholder label="食品日用品价格趋势图占位" />
-        </SectionCard>
+        <PriceTrendCard
+          title="商品历史价格趋势"
+          description="价格走势"
+          item={FOOD_OIL}
+          onOpenDetail={onOpenDetail}
+        />
       </div>
 
-      <SectionCard title="商品追踪列表" description="全部追踪商品">
-        <TablePlaceholder
-          columns={["商品名称", "分类", "品牌", "规格", "当前价", "历史最低", "更新时间"]}
+      <SectionCard title="商品追踪列表" description="点击商品名称查看详情">
+        <PriceProductTable
+          products={foodProducts}
+          onOpen={(id) => onOpenDetail({ kind: "price", id })}
         />
       </SectionCard>
     </div>
   );
 }
 
-export function PriceEnergyPage() {
+export function PriceEnergyPage({ onOpenDetail }: PricePageProps) {
+  const oil = latestStat(ENERGY_OIL.series, ENERGY_OIL.unit);
+  const gas = latestStat(ENERGY_GAS.series, ENERGY_GAS.unit);
+  const gold = latestStat(ENERGY_GOLD.series, ENERGY_GOLD.unit);
+  const copper = latestStat(ENERGY_COPPER.series, ENERGY_COPPER.unit);
+
   return (
     <div>
       <PageHeader
@@ -175,22 +245,36 @@ export function PriceEnergyPage() {
       </FilterBar>
 
       <div className="mb-4">
-        <SectionCard title="主要商品价格概览" description="重点能源与大宗商品">
+        <SectionCard title="主要商品价格概览" description="点击卡片查看商品详情">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <StatCard label="原油 (WTI)" />
-            <StatCard label="天然气" />
-            <StatCard label="黄金" />
-            <StatCard label="铜" />
+            <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_OIL)}>
+              <StatCard label="原油 (WTI)" value={oil.value} change={oil.change} />
+            </DetailTrigger>
+            <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_GAS)}>
+              <StatCard label="天然气" value={gas.value} change={gas.change} />
+            </DetailTrigger>
+            <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_GOLD)}>
+              <StatCard label="黄金" value={gold.value} change={gold.change} />
+            </DetailTrigger>
+            <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_COPPER)}>
+              <StatCard label="铜" value={copper.value} change={copper.change} />
+            </DetailTrigger>
           </div>
         </SectionCard>
       </div>
 
       <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <SectionCard title="历史价格趋势" description="主要商品价格走势">
-          <ChartPlaceholder label="能源与大宗商品价格趋势图占位" />
-        </SectionCard>
-        <SectionCard title="商品比较" description="不同商品价格对比">
-          <TablePlaceholder columns={["商品", "当前价", "涨跌", "涨跌幅", "更新时间"]} />
+        <PriceTrendCard
+          title="历史价格趋势"
+          description="主要商品价格走势"
+          item={ENERGY_OIL}
+          onOpenDetail={onOpenDetail}
+        />
+        <SectionCard title="商品比较" description="点击商品名称查看详情">
+          <PriceProductTable
+            products={[ENERGY_OIL, ENERGY_GAS, ENERGY_GOLD, ENERGY_COPPER]}
+            onOpen={(id) => onOpenDetail({ kind: "price", id })}
+          />
         </SectionCard>
       </div>
     </div>
