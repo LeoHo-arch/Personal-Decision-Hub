@@ -25,7 +25,6 @@ export type NavItemId =
   | "macro-global"
   | "news-briefing"
   | "news-archive"
-  | "news-detail"
   | "price-overview"
   | "price-digital"
   | "price-food"

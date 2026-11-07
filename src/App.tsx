@@ -29,15 +29,11 @@ import {
 } from "@/pages/decision/DecisionPages";
 import { NewsBriefingPage } from "@/pages/news/NewsBriefingPage";
 import { NewsArchivePage } from "@/pages/news/NewsArchivePage";
-import { NewsDetailPage } from "@/pages/news/NewsDetailPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 
 interface PageProps {
-  selectedNewsId: string | null;
   onOpenNews: (id: string) => void;
-  onOpenNewsPage: (id: string) => void;
   onOpenDetail: (ref: DetailRef) => void;
-  onBackToBriefing: () => void;
 }
 
 const pageRegistry: Record<NavItemId, (props: PageProps) => React.JSX.Element> = {
@@ -48,9 +44,6 @@ const pageRegistry: Record<NavItemId, (props: PageProps) => React.JSX.Element> =
   "macro-global": MacroGlobalPage,
   "news-briefing": NewsBriefingPage,
   "news-archive": ({ onOpenNews }) => <NewsArchivePage onOpenNews={onOpenNews} />,
-  "news-detail": ({ selectedNewsId, onBackToBriefing }) => (
-    <NewsDetailPage newsId={selectedNewsId} onBack={onBackToBriefing} />
-  ),
   "price-overview": PriceOverviewPage,
   "price-digital": PriceDigitalPage,
   "price-food": PriceFoodPage,
@@ -66,7 +59,6 @@ const tickerItems = briefingDate ? getFeaturedNews(MOCK_NEWS, briefingDate) : []
 
 function App() {
   const [activeId, setActiveId] = useState<NavItemId>(defaultPage);
-  const [selectedNewsId, setSelectedNewsId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -85,11 +77,6 @@ function App() {
 
   const openNewsDrawer = (id: string) => openDetail({ kind: "news", id });
 
-  const openNewsPage = (id: string) => {
-    setSelectedNewsId(id);
-    setActiveId("news-detail");
-  };
-
   return (
     <div className="flex h-screen flex-col bg-gray-50">
       <Header onToggleSidebar={() => setMobileOpen((v) => !v)} />
@@ -105,11 +92,8 @@ function App() {
         />
         <main ref={mainRef} data-scroll-root className="flex-1 overflow-y-auto p-4 sm:p-6">
           <ActivePage
-            selectedNewsId={selectedNewsId}
             onOpenNews={openNewsDrawer}
-            onOpenNewsPage={openNewsPage}
             onOpenDetail={openDetail}
-            onBackToBriefing={() => setActiveId("news-briefing")}
           />
         </main>
       </div>

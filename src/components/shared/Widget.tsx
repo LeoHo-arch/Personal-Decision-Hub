@@ -13,11 +13,13 @@ export function Widget({ title, description, children }: WidgetProps) {
       {description && (
         <p className="mt-1 text-xs text-gray-400">{description}</p>
       )}
-      {children ?? (
-        <div className="mt-4 flex h-32 items-center justify-center rounded-md border border-dashed border-gray-200 bg-gray-50 text-xs text-gray-400">
-          内容占位区
-        </div>
-      )}
+      <div className="mt-3">
+        {children ?? (
+          <div className="flex items-center justify-center rounded-md border border-dashed border-gray-200 bg-gray-50 py-8 text-xs text-gray-400">
+            内容占位区
+          </div>
+        )}
+      </div>
     </div>
   );
 }

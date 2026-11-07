@@ -11,7 +11,7 @@ interface IndicatorRowsProps {
 
 export function IndicatorRows({ indicators, onOpen }: IndicatorRowsProps) {
   return (
-    <div className="mt-4 space-y-1">
+    <div className="space-y-1">
       {indicators.map((item) => {
         const change = getSeriesChange(item.series);
         return (
@@ -32,7 +32,6 @@ export function IndicatorRows({ indicators, onOpen }: IndicatorRowsProps) {
           </DetailTrigger>
         );
       })}
-      <p className="pt-2 text-center text-xs text-gray-400">点击指标查看详情</p>
     </div>
   );
 }
@@ -44,7 +43,7 @@ interface ProductRowsProps {
 
 export function ProductRows({ products, onOpen }: ProductRowsProps) {
   return (
-    <div className="mt-4 space-y-1">
+    <div className="space-y-1">
       {products.map((item) => {
         const change = getSeriesChange(item.series);
         return (
@@ -68,7 +67,6 @@ export function ProductRows({ products, onOpen }: ProductRowsProps) {
           </DetailTrigger>
         );
       })}
-      <p className="pt-2 text-center text-xs text-gray-400">点击商品查看详情</p>
     </div>
   );
 }
@@ -80,9 +78,8 @@ interface TrendRowProps {
 
 export function MacroTrendPreview({ item, onOpen }: TrendRowProps) {
   return (
-    <DetailTrigger onOpen={() => onOpen(item.id)} className="mt-4 p-1">
+    <DetailTrigger onOpen={() => onOpen(item.id)}>
       <TrendChart series={item.series} label={`${item.name}趋势图`} />
-      <p className="mt-2 text-center text-xs text-gray-400">展示：{item.name}，点击查看指标详情</p>
     </DetailTrigger>
   );
 }
