@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { PageHeader, EmptyState } from "@/components/wireframe";
-import { DetailDrawer } from "@/components/shared/DetailDrawer";
 import { NewsCard } from "@/components/news/NewsCard";
 import { NewsDemoNotice } from "@/components/news/NewsDemoNotice";
-import { NewsDetailContent, NewsDetailHeader } from "@/components/news/NewsDetailContent";
 import { NewsFilterBar } from "@/components/news/NewsFilterBar";
 import { MOCK_NEWS } from "@/data/mockNews";
 import {
@@ -15,20 +13,16 @@ import {
 } from "@/lib/news";
 import type { NewsFilterState } from "@/types/news";
 
-export function NewsBriefingPage() {
+interface NewsBriefingPageProps {
+  onOpenNews: (id: string) => void;
+}
+
+export function NewsBriefingPage({ onOpenNews }: NewsBriefingPageProps) {
   const [filters, setFilters] = useState<NewsFilterState>(EMPTY_NEWS_FILTERS);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [detailId, setDetailId] = useState<string | null>(null);
 
   const briefingDate = getLatestBriefingDate(MOCK_NEWS);
   const featured = briefingDate ? getFeaturedNews(MOCK_NEWS, briefingDate) : [];
   const visible = filterNews(featured, filters);
-  const detailItem = MOCK_NEWS.find((n) => n.id === detailId) ?? null;
-
-  const openDetail = (id: string) => {
-    setDetailId(id);
-    setDrawerOpen(true);
-  };
 
   return (
     <div>
@@ -54,19 +48,10 @@ export function NewsBriefingPage() {
       ) : (
         <div className="space-y-4">
           {visible.map((item) => (
-            <NewsCard key={item.id} item={item} onOpen={openDetail} />
+            <NewsCard key={item.id} item={item} onOpen={onOpenNews} />
           ))}
         </div>
       )}
-
-      <DetailDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        label="新闻详情"
-        header={detailItem && <NewsDetailHeader item={detailItem} />}
-      >
-        {detailItem && <NewsDetailContent item={detailItem} />}
-      </DetailDrawer>
     </div>
   );
 }

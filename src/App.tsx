@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { DetailHost, type DetailTarget } from "@/components/shared/DetailHost";
 import { NewsTicker } from "@/components/news/NewsTicker";
 import { defaultPage, type NavItemId } from "@/config/navigation";
+import { useDetailDrawer } from "@/hooks/useDetailDrawer";
 import { MOCK_NEWS } from "@/data/mockNews";
 import { getFeaturedNews, getLatestBriefingDate } from "@/lib/news";
 import { DashboardPage } from "@/pages/DashboardPage";
@@ -31,6 +33,7 @@ import { SettingsPage } from "@/pages/SettingsPage";
 interface PageProps {
   selectedNewsId: string | null;
   onOpenNews: (id: string) => void;
+  onOpenNewsPage: (id: string) => void;
   onBackToBriefing: () => void;
 }
 
@@ -41,7 +44,7 @@ const pageRegistry: Record<NavItemId, (props: PageProps) => React.JSX.Element> =
   "macro-us": MacroUsPage,
   "macro-global": MacroGlobalPage,
   "news-briefing": NewsBriefingPage,
-  "news-archive": NewsArchivePage,
+  "news-archive": ({ onOpenNewsPage }) => <NewsArchivePage onOpenNews={onOpenNewsPage} />,
   "news-detail": ({ selectedNewsId, onBackToBriefing }) => (
     <NewsDetailPage newsId={selectedNewsId} onBack={onBackToBriefing} />
   ),
@@ -64,6 +67,7 @@ function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
+  const detail = useDetailDrawer<DetailTarget>();
 
   useEffect(() => {
     mainRef.current?.scrollTo({ top: 0 });
@@ -71,7 +75,12 @@ function App() {
 
   const ActivePage = pageRegistry[activeId];
 
-  const openNews = (id: string) => {
+  const openNewsDrawer = (id: string) => {
+    const item = MOCK_NEWS.find((n) => n.id === id);
+    if (item) detail.openWith({ kind: "news", item });
+  };
+
+  const openNewsPage = (id: string) => {
     setSelectedNewsId(id);
     setActiveId("news-detail");
   };
@@ -79,7 +88,7 @@ function App() {
   return (
     <div className="flex h-screen flex-col bg-gray-50">
       <Header onToggleSidebar={() => setMobileOpen((v) => !v)} />
-      <NewsTicker items={tickerItems} onOpenNews={openNews} />
+      <NewsTicker items={tickerItems} onOpenNews={openNewsDrawer} />
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
           activeId={activeId}
@@ -92,11 +101,13 @@ function App() {
         <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6">
           <ActivePage
             selectedNewsId={selectedNewsId}
-            onOpenNews={openNews}
+            onOpenNews={openNewsDrawer}
+            onOpenNewsPage={openNewsPage}
             onBackToBriefing={() => setActiveId("news-briefing")}
           />
         </main>
       </div>
+      <DetailHost open={detail.open} target={detail.current} onClose={detail.close} />
     </div>
   );
 }
