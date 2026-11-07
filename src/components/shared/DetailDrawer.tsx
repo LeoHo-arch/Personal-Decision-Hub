@@ -48,10 +48,14 @@ export function DetailDrawer({ open, onClose, label, header, children }: DetailD
 
   useEffect(() => {
     if (!mounted) return;
-    const previousOverflow = document.body.style.overflow;
+    const scroller = document.querySelector<HTMLElement>("[data-scroll-root]");
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousScrollerOverflow = scroller?.style.overflow ?? "";
     document.body.style.overflow = "hidden";
+    if (scroller) scroller.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      if (scroller) scroller.style.overflow = previousScrollerOverflow;
     };
   }, [mounted]);
 

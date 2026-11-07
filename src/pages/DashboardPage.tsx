@@ -47,35 +47,33 @@ export function DashboardPage({ onOpenDetail }: DashboardPageProps) {
         }
       />
 
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Widget title="中国宏观经济概览" description="GDP、CPI、PPI 等核心指标">
-          <IndicatorRows indicators={[CN_GDP, CN_CPI, CN_PPI, CN_PMI]} onOpen={openMacro} />
-        </Widget>
-        <Widget title="美国宏观经济概览" description="利率、通胀、就业等核心指标">
-          <IndicatorRows indicators={[US_GDP, US_CPI, US_UNEMPLOYMENT, US_FED_RATE]} onOpen={openMacro} />
-        </Widget>
-        <div className="md:col-span-2 lg:col-span-1">
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Widget title="中国宏观经济概览" description="GDP、CPI、PPI 等核心指标">
+            <IndicatorRows indicators={[CN_GDP, CN_CPI, CN_PPI, CN_PMI]} onOpen={openMacro} />
+          </Widget>
+          <Widget title="美国宏观经济概览" description="利率、通胀、就业等核心指标">
+            <IndicatorRows indicators={[US_GDP, US_CPI, US_UNEMPLOYMENT, US_FED_RATE]} onOpen={openMacro} />
+          </Widget>
           <Widget title="股票观察" description="自选股行情与关注列表占位" />
         </div>
-      </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <Widget title="核心宏观经济趋势" description="关键宏观指标趋势图">
-            <MacroTrendPreview item={CN_GDP} onOpen={openMacro} />
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <Widget title="核心宏观经济趋势" description="关键宏观指标趋势图">
+              <MacroTrendPreview item={CN_GDP} onOpen={openMacro} />
+            </Widget>
+          </div>
+          <Widget title="汇率与大宗商品" description="主要大宗商品价格">
+            <ProductRows products={[ENERGY_OIL, ENERGY_GAS, ENERGY_GOLD, ENERGY_COPPER]} onOpen={openPrice} />
           </Widget>
         </div>
-        <Widget title="汇率与大宗商品" description="主要大宗商品价格">
-          <ProductRows products={[ENERGY_OIL, ENERGY_GAS, ENERGY_GOLD, ENERGY_COPPER]} onOpen={openPrice} />
-        </Widget>
-      </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Widget title="消费品价格追踪" description="数码、食品、能源价格走势">
-          <ProductRows products={[DIGITAL_PHONE, FOOD_OIL, FOOD_EGG]} onOpen={openPrice} />
-        </Widget>
-        <Widget title="最近购买计划" description="近期计划购买的商品列表占位" />
-        <div className="md:col-span-2 lg:col-span-1">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Widget title="消费品价格追踪" description="数码、食品、能源价格走势">
+            <ProductRows products={[DIGITAL_PHONE, FOOD_OIL, FOOD_EGG]} onOpen={openPrice} />
+          </Widget>
+          <Widget title="最近购买计划" description="近期计划购买的商品列表占位" />
           <Widget title="最近决策记录" description="近期个人决策日志占位" />
         </div>
       </div>

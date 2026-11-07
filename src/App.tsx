@@ -47,7 +47,7 @@ const pageRegistry: Record<NavItemId, (props: PageProps) => React.JSX.Element> =
   "macro-us": MacroUsPage,
   "macro-global": MacroGlobalPage,
   "news-briefing": NewsBriefingPage,
-  "news-archive": ({ onOpenNewsPage }) => <NewsArchivePage onOpenNews={onOpenNewsPage} />,
+  "news-archive": ({ onOpenNews }) => <NewsArchivePage onOpenNews={onOpenNews} />,
   "news-detail": ({ selectedNewsId, onBackToBriefing }) => (
     <NewsDetailPage newsId={selectedNewsId} onBack={onBackToBriefing} />
   ),
@@ -103,7 +103,7 @@ function App() {
           mobileOpen={mobileOpen}
           onCloseMobile={() => setMobileOpen(false)}
         />
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main ref={mainRef} data-scroll-root className="flex-1 overflow-y-auto p-4 sm:p-6">
           <ActivePage
             selectedNewsId={selectedNewsId}
             onOpenNews={openNewsDrawer}
