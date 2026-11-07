@@ -45,11 +45,8 @@ function PriceTrendCard({
 }: PricePageProps & { title: string; description: string; item: PriceProduct }) {
   return (
     <SectionCard title={title} description={description}>
-      <DetailTrigger onOpen={openPrice(onOpenDetail, item)} className="p-1">
+      <DetailTrigger onOpen={openPrice(onOpenDetail, item)}>
         <TrendChart series={item.series} label={`${item.name}价格趋势图`} />
-        <p className="mt-3 text-center text-xs text-gray-400">
-          展示：{item.name}，点击查看商品详情
-        </p>
       </DetailTrigger>
     </SectionCard>
   );
@@ -93,7 +90,7 @@ export function PriceOverviewPage({ onOpenDetail }: PricePageProps) {
         />
       </div>
 
-      <SectionCard title="商品分类入口" description="点击卡片查看各分类的代表商品">
+      <SectionCard title="商品分类入口" description="各分类的代表商品">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <DetailTrigger onOpen={openPrice(onOpenDetail, DIGITAL_PHONE)}>
             <CategoryEntry icon={<Smartphone size={20} />} label="数码产品" desc="手机、电脑、相机等" />
@@ -161,7 +158,7 @@ export function PriceDigitalPage({ onOpenDetail }: PricePageProps) {
         />
       </div>
 
-      <SectionCard title="商品追踪列表" description="点击商品名称查看详情">
+      <SectionCard title="商品追踪列表" description="数码产品当前价格">
         <PriceProductTable
           products={digitalProducts}
           onOpen={(id) => onOpenDetail({ kind: "price", id })}
@@ -212,7 +209,7 @@ export function PriceFoodPage({ onOpenDetail }: PricePageProps) {
         />
       </div>
 
-      <SectionCard title="商品追踪列表" description="点击商品名称查看详情">
+      <SectionCard title="商品追踪列表" description="食品与日用品当前价格">
         <PriceProductTable
           products={foodProducts}
           onOpen={(id) => onOpenDetail({ kind: "price", id })}
@@ -245,7 +242,7 @@ export function PriceEnergyPage({ onOpenDetail }: PricePageProps) {
       </FilterBar>
 
       <div className="mb-4">
-        <SectionCard title="主要商品价格概览" description="点击卡片查看商品详情">
+        <SectionCard title="主要商品价格概览" description="能源与大宗商品的当前价格">
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <DetailTrigger onOpen={openPrice(onOpenDetail, ENERGY_OIL)}>
               <StatCard label="原油 (WTI)" value={oil.value} change={oil.change} />
@@ -270,7 +267,7 @@ export function PriceEnergyPage({ onOpenDetail }: PricePageProps) {
           item={ENERGY_OIL}
           onOpenDetail={onOpenDetail}
         />
-        <SectionCard title="商品比较" description="点击商品名称查看详情">
+        <SectionCard title="商品比较" description="能源与大宗商品对比">
           <PriceProductTable
             products={[ENERGY_OIL, ENERGY_GAS, ENERGY_GOLD, ENERGY_COPPER]}
             onOpen={(id) => onOpenDetail({ kind: "price", id })}

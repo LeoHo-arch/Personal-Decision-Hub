@@ -31,11 +31,8 @@ function MacroTrendCard({
 }: MacroPageProps & { title: string; description: string; item: MacroIndicator }) {
   return (
     <SectionCard title={title} description={description}>
-      <DetailTrigger onOpen={openMacro(onOpenDetail, item)} className="p-1">
+      <DetailTrigger onOpen={openMacro(onOpenDetail, item)}>
         <TrendChart series={item.series} label={`${item.name}趋势图`} />
-        <p className="mt-3 text-center text-xs text-gray-400">
-          展示：{item.name}，点击查看指标详情
-        </p>
       </DetailTrigger>
     </SectionCard>
   );
